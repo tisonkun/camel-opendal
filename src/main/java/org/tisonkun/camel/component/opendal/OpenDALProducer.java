@@ -16,21 +16,24 @@
 
 package org.tisonkun.camel.component.opendal;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.camel.Exchange;
 import org.apache.camel.support.DefaultProducer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.opendal.BlockingOperator;
 
+@Slf4j
 public class OpenDALProducer extends DefaultProducer {
-    private static final Logger LOG = LoggerFactory.getLogger(OpenDALProducer.class);
-    private OpenDALEndpoint endpoint;
+    private final OpenDALEndpoint endpoint;
+    private final BlockingOperator operator;
 
     public OpenDALProducer(OpenDALEndpoint endpoint) {
         super(endpoint);
         this.endpoint = endpoint;
+        this.operator = new BlockingOperator(endpoint.getServiceName(), endpoint.options);
     }
 
     public void process(Exchange exchange) throws Exception {
+        operator.write(endpoint.getRootPath(), exchange.getIn().getMessageId());
         System.out.println(exchange.getIn().getBody());
     }
 }

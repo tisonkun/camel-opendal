@@ -17,8 +17,6 @@ name: CI
 on:
   push:
   pull_request:
-  schedule:
-    - cron: '25 4 * * *'
 
 concurrency:
   group: ${{ github.ref }}-${{ github.workflow }}
@@ -26,7 +24,6 @@ concurrency:
 
 jobs:
   check:
-    if: (github.event_name != 'schedule') || (github.repository == 'tisonkun/failpoints')
     name: Check and lint
     runs-on: ubuntu-latest
     timeout-minutes: 10
@@ -43,7 +40,6 @@ jobs:
         run: ./mvnw spotless:check
 
   unittest:
-    if: (github.event_name != 'schedule') || (github.repository == 'tisonkun/failpoints')
     name: Run unit tests
     runs-on: ubuntu-latest
     timeout-minutes: 10

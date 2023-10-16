@@ -24,8 +24,10 @@ import org.apache.camel.support.DefaultComponent;
 public class OpenDALComponent extends DefaultComponent {
 
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        Endpoint endpoint = new OpenDALEndpoint(uri, this);
+        final OpenDALEndpoint endpoint = new OpenDALEndpoint(uri, this);
+        endpoint.setRootPath(remaining);
         setProperties(endpoint, parameters);
+        parameters.forEach((key, value) -> endpoint.options.put(key, value.toString()));
         return endpoint;
     }
 }

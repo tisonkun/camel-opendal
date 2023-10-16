@@ -45,7 +45,9 @@ public class OpenDALComponentTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
-                from("opendal://foo").to("opendal://bar").to("mock:result");
+                from("opendal:foo?serviceName=memory")
+                        .to("opendal:bar?serviceName=memory")
+                        .to("mock:result");
             }
         };
     }

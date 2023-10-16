@@ -16,7 +16,12 @@
 
 package org.tisonkun.camel.component.opendal;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.ExecutorService;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
@@ -28,25 +33,38 @@ import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
 
 /**
- * OpenDAL component which does bla bla.
- *
- * TODO: Update one line description above what the component does, and update Category.
+ * Store and retrieve objects from various storage services via OpenDAL.
  */
+@Getter
+@Setter
+@NoArgsConstructor
 @UriEndpoint(
         firstVersion = "0.1.0-SNAPSHOT",
         scheme = "opendal",
         title = "OpenDAL",
-        syntax = "opendal:name",
-        category = {Category.DATABASE})
+        syntax = "opendal://rootPath",
+        category = {
+            Category.CACHE,
+            Category.CLOUD,
+            Category.DATABASE,
+            Category.FILE,
+        })
 public class OpenDALEndpoint extends DefaultEndpoint {
+    public final Map<String, String> options = new HashMap<>();
+
+    /**
+     * The root path to construct the OpenDAL operator.
+     */
     @UriPath
     @Metadata(required = true)
-    private String name;
+    private String rootPath;
 
-    @UriParam(defaultValue = "10")
-    private int option = 10;
-
-    public OpenDALEndpoint() {}
+    /**
+     * The name of the backed storage service.
+     */
+    @UriParam
+    @Metadata(required = true)
+    private String serviceName;
 
     public OpenDALEndpoint(String uri, OpenDALComponent component) {
         super(uri, component);
@@ -62,30 +80,7 @@ public class OpenDALEndpoint extends DefaultEndpoint {
         return consumer;
     }
 
-    /**
-     * Some description of this option, and what it does
-     */
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    /**
-     * Some description of this option, and what it does
-     */
-    public void setOption(int option) {
-        this.option = option;
-    }
-
-    public int getOption() {
-        return option;
-    }
-
     public ExecutorService createExecutor() {
-        // TODO: Delete me when you implemented your custom component
         return getCamelContext().getExecutorServiceManager().newSingleThreadExecutor(this, "OpenDALConsumer");
     }
 }
